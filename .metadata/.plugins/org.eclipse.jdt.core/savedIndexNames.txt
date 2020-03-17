@@ -1,0 +1,20 @@
+INDEX VERSION 1.127+C:\Users\Carlos Sanchez\Desktop\lenguajes y automatas II\.metadata\.plugins\org.eclipse.jdt.core
+2643586460.index
+3257608530.index
+717518826.index
+2121120366.index
+3454031558.index
+501281018.index
+3895520456.index
+318037227.index
+683593292.index
+2124177100.index
+3873120834.index
+1782396649.index
+8964934.index
+2708089013.index
+3064412475.index
+859210492.index
+720843298.index
+4014178269.index
+3394812137.index
