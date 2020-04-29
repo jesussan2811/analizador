@@ -1,9 +1,0 @@
-public class Prueba{
-    private int num=1;
-    private boolean band;
-
-    if(num==1)
-        band=true;
-    else
-        band=false;
-

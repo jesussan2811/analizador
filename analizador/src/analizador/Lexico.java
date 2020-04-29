@@ -9,7 +9,7 @@ public class Lexico {
     private ArrayList<String> PalabrasReservadas;
     private String[] tiposDeTokens={"modificador","identificador","tipo","relational operador","operador aritmetico",
                                     "boolean literal","integer literal","key inicial",";","=","parentesis inicial","key cierre",
-                                    "parentesis cierre"};
+                                    "parentesis cierre","declaracion class","declaracion if"};
 
     public Lexico(){
         PalabrasReservadas=new ArrayList<>();
@@ -25,7 +25,7 @@ public class Lexico {
                 palabra=linea;
                 if(palabra.indexOf("{")>=0 || palabra.indexOf("=")>=0 ||
                         palabra.indexOf(";")>=0 || palabra.indexOf(">")>=0 || palabra.indexOf("<")>=0){
-                    separaTokens(palabra);
+                    separaTokens(palabra,l);
                     linea = "";
                     continue;
                 }
@@ -34,7 +34,7 @@ public class Lexico {
                 palabra = linea.substring(0, corte);
                 if(palabra.indexOf("{")>=0 || palabra.indexOf("=")>=0 ||
                         palabra.indexOf(";")>=0 || palabra.indexOf(">")>=0 || palabra.indexOf("<")>=0){
-                    separaTokens(palabra);
+                    separaTokens(palabra,l);
                     linea = linea.substring(corte + 1);
                     continue;
                 }
@@ -51,7 +51,7 @@ public class Lexico {
                 continue;
             }
             c=c+corte+1;
-            AppCompilador.agregarToken(palabra,pres,tipo);
+            AppCompilador.agregarToken(l,palabra,pres,tipo);
         }
     }
 
@@ -59,6 +59,7 @@ public class Lexico {
         PalabrasReservadas.add("boolean");
         PalabrasReservadas.add("class");
         PalabrasReservadas.add("if");
+        PalabrasReservadas.add("else");
         PalabrasReservadas.add("int");
         PalabrasReservadas.add("private");
         PalabrasReservadas.add("public");
@@ -83,7 +84,11 @@ public class Lexico {
             return tiposDeTokens[4];
         if(palabra.equals("public") || palabra.equals("private"))
             return tiposDeTokens[0];
-        if(palabra.equals("int") || palabra.equals("boolean"))
+        if (palabra.equals("class"))
+            return tiposDeTokens[13];
+        if (palabra.equals("if") || palabra.equals("else"))
+                return tiposDeTokens[14];
+        if(palabra.equals("int") || palabra.equals("boolean") || palabra.equals("String"))
             return tiposDeTokens[2];
         if(palabra.equals("<") || palabra.equals("==") || palabra.equals("!=") || palabra.equals(">") || palabra.equals("<=") || palabra.equals(">="))
             return tiposDeTokens[3];
@@ -123,7 +128,7 @@ public class Lexico {
 
     //Valida que el identifier cumpla con la expresion
     public boolean validarExpresion(String palabra) {
-        Pattern pat = Pattern.compile("[A-Za-z0-9]");
+        Pattern pat = Pattern.compile("^[^0-9][A-Za-z0-9]");
         Matcher mat = pat.matcher(palabra);
         if(mat.find())
             return true;
@@ -131,12 +136,12 @@ public class Lexico {
     }
 
     //Separa tokens sin espacios entre ellos
-    public void separaTokens(String palabra){
+    public void separaTokens(String palabra,int l){
         int i;
         String t;
         while(palabra.length()!=0) {
             if(palabra.charAt(0)=='(' || palabra.charAt(0)==')'){
-                AppCompilador.agregarToken(palabra.charAt(0)+"",false,tipoDeToken(palabra.charAt(0)+""));
+                AppCompilador.agregarToken(l,palabra.charAt(0)+"",false,tipoDeToken(palabra.charAt(0)+""));
                 if (palabra.length()!=1) {
                     palabra=palabra.substring(1);
                     continue;
@@ -145,7 +150,7 @@ public class Lexico {
                 continue;
             }
             if(palabra.indexOf("{")==0 || palabra.indexOf("}")==0){
-                AppCompilador.agregarToken(palabra.substring(0,1),false,tipoDeToken(palabra.charAt(0)+""));
+                AppCompilador.agregarToken(l,palabra.substring(0,1),false,tipoDeToken(palabra.charAt(0)+""));
                 if (palabra.length()!=1) {
                     palabra=palabra.substring(1);
                     continue;
@@ -154,7 +159,7 @@ public class Lexico {
                 continue;
             }
             if(palabra.indexOf(";")==0){
-                AppCompilador.agregarToken(";",false,";");
+                AppCompilador.agregarToken(l,";",false,";");
                 if (palabra.length()!=1) {
                     palabra=palabra.substring(1);
                     continue;
@@ -168,7 +173,7 @@ public class Lexico {
                             (palabra.charAt(1)=='=' || palabra.charAt(1)=='>' || palabra.charAt(1)=='<')
             ){
                 String aux=palabra.substring(0,2);
-                AppCompilador.agregarToken(aux,false,tipoDeToken(aux));
+                AppCompilador.agregarToken(l,aux,false,tipoDeToken(aux));
                 if (palabra.length()!=2) {
                     palabra=palabra.substring(2);
                     continue;
@@ -177,7 +182,7 @@ public class Lexico {
                 continue;
             }
             if(palabra.charAt(0)=='='){
-                AppCompilador.agregarToken(palabra.charAt(0)+"",false,tipoDeToken(palabra.charAt(0)+""));
+                AppCompilador.agregarToken(l,palabra.charAt(0)+"",false,tipoDeToken(palabra.charAt(0)+""));
                 if (palabra.length()!=1) {
                     palabra=palabra.substring(1);
                     continue;
@@ -189,7 +194,7 @@ public class Lexico {
             t = palabra.substring(0, i);
             boolean pres = comprobarPalabra(t);
             String tipo = tipoDeToken(t);
-            AppCompilador.agregarToken(t, pres, tipo);
+            AppCompilador.agregarToken(l, t, pres, tipo);
             palabra = palabra.substring(i);
         }
     }
